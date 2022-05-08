@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter_application_8/db.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 Future<List<Product>> _productsLol() async {
@@ -20,7 +21,15 @@ Future<List<Product>> _productsLol() async {
 Future<bool> productsLol() async {
   final Directory appDir = await getApplicationDocumentsDirectory();
 
-  return await compute(__productsLol, appDir);
+  final Box<Product> box = Hive.box<Product>('products');
+
+  await box.close();
+
+  await compute(__productsLol, appDir);
+
+  await Hive.openBox<Product>('products');
+
+  return true;
 }
 
 Future<bool> __productsLol(Directory appDir) async {
@@ -47,8 +56,9 @@ class MyApp extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             }
-            return const Center(
-              child: Text('data'),
+            final Box<Product> box = Hive.box<Product>('products');
+            return Center(
+              child: Text(box.length.toString()),
             );
             // return ListView.builder(
             //   itemCount: data.length,

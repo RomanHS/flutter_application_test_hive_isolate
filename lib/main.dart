@@ -20,7 +20,7 @@ void main() async {
   Hive.registerAdapter(PriceAdapter());
   Hive.registerAdapter(UnitAdapter());
 
-  final LazyBox<Product> box = await Hive.openLazyBox<Product>('products');
+  final Box<Product> box = await Hive.openBox<Product>('products');
   log(box.length.toString());
   // await box.close();
 

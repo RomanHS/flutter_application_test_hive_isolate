@@ -55,6 +55,8 @@ Future<List<Product>> sjfsdfsdfsdf(Params params) async {
 
   await box.putAll(params.products);
 
+  await box.compact();
+
   await box.close();
 
   // await box.putAll(params.products.map((key, value) => MapEntry(key, json.encode(value.toJson()))));
