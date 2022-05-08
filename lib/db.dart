@@ -17,17 +17,54 @@ class Params {
 }
 
 Future<List<Product>> sjfsdfsdfsdf(Params params) async {
+  log('start put database ${DateTime.now()}');
+  log('init');
   Hive.init(params.appDir.path);
   Hive.registerAdapter(ProductAdapter());
   Hive.registerAdapter(PriceAdapter());
   Hive.registerAdapter(UnitAdapter());
-  final Box<Product> box = await Hive.openBox<Product>('products');
+  // final Box<Product> box = await Hive.openBox<Product>('products');
+  final LazyBox<Product> box = await Hive.openLazyBox<Product>('products');
+
+  // final Box<String> box = await Hive.openBox<String>('productsString');
+
+  log('entries ${DateTime.now()}');
+
+  // final entries = params.products.entries.toList();
+
+  // const max = 10000;
+  // final kol = entries.length ~/ max;
+  // final ost = entries.length % max;
+
+  // final List<Future<void>> futures = [];
+
+  // for (int i = 0; i < kol; i++) {
+  //   log(i.toString());
+  //   final range = entries.getRange(i, i + max);
+  //   final future = box.putAll(Map.fromEntries(range));
+  //   futures.add(future);
+  // }
+
+  // if (ost != 0) {
+  //   final range = entries.getRange(entries.length - ost, entries.length);
+  //   final future = box.putAll(Map.fromIterable(range));
+  //   futures.add(future);
+  // }
+
+  // await Future.wait(futures);
+
   await box.putAll(params.products);
+
+  await box.close();
+
+  // await box.putAll(params.products.map((key, value) => MapEntry(key, json.encode(value.toJson()))));
+  log('finash put database ${DateTime.now()}');
   return params.products.values.toList();
 }
 
 Map<String, Product> generateProducts(bool value) {
-  return Map.fromEntries(List.generate(1000000, (index) {
+  log('start generate');
+  final res = Map.fromEntries(List.generate(100000, (index) {
     final product = Product(
       uid: '$index',
       name: 'Product $index',
@@ -38,6 +75,8 @@ Map<String, Product> generateProducts(bool value) {
     );
     return MapEntry(product.uid, product);
   }));
+  log('finash generate');
+  return res;
 }
 
 class A {
